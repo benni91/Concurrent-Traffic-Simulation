@@ -16,6 +16,7 @@ void createTrafficObjects_Paris(std::vector<std::shared_ptr<Street>> &streets, s
     // According to Google - WebP lossless images are 26% smaller in size compared to PNGs. 
     // WebP lossy images are 25-34% smaller than comparable JPEG images at equivalent SSIM quality index. 
     filename = "../data/paris.jpg";
+    // filename = "../data/nyc.jpg";
 
     // init traffic objects
     int nIntersections = 9;
