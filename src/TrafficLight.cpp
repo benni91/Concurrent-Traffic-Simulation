@@ -73,25 +73,36 @@ void TrafficLight::cycleThroughPhases()
     // FP.2a : Implement the function with an infinite loop that measures the time between two loop cycles 
     // and toggles the current phase of the traffic light between red and green and sends an update method 
     // to the message queue using move semantics. The cycle duration should be a random value between 4 and 6 seconds. 
-    // Also, the while-loop should use std::this_thread::sleep_for to wait 1ms between two cycles. 
+    // Also, the while-loop should use std::this_thread::sleep_for to wait 1ms between two cycles.
+
+    //double cycleDuration = 2000; // duration of a single simulation cycle in ms
+    std::chrono::time_point<std::chrono::system_clock> lastUpdate;
+
+    lastUpdate = std::chrono::system_clock::now(); 
+    int random;
+        
+    std::uniform_int_distribution<int> uni(4000,6000);
      while(true) {
-        std::random_device rd;
-    std::default_random_engine myRandomEngine(rd());
-    std::uniform_int_distribution<int> uni(4,6);
-    int random_integer;
-        random_integer = uni(myRandomEngine);
-        // auto start = std::chrono::steady_clock::now();
-        // std::this_thread::sleep_until(start + std::chrono::seconds(4));
-        std::this_thread::sleep_for(std::chrono::seconds(random_integer));
-        if (this->getCurrentPhase() == TrafficLightPhase::green) {
-            this->_currentPhase = TrafficLightPhase::red;
-            std::cout << "Intersection #" << _id << ": Traffic Light switched to red!" << std::endl;
+        //std::random_device rd;
+        //std::mt19937 gen(rd());
+        //random = uni(gen);
+        random = rand() % 3000+4000;
+
+        long timeSinceLastUpdate = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - lastUpdate).count();
+        if (timeSinceLastUpdate >=   random) { //cycleDuration
+        std::cout << "Random: " << random << std::endl;
+            //std::this_thread::sleep_for(std::chrono::seconds(random_integer));
+            if (this->getCurrentPhase() == TrafficLightPhase::green) {
+                this->_currentPhase = TrafficLightPhase::red;
+                //std::cout << "Intersection #" << _id << ": Traffic Light switched to red!" << std::endl;
+            }
+            else {
+                this->_currentPhase = TrafficLightPhase::green;
+                //std::cout << "Intersection #" << _id << ": Traffic Light switched to green!" << std::endl;
+            }
+            _phaseQueue.send(std::move(_currentPhase));
+            lastUpdate = std::chrono::system_clock::now();
         }
-        else {
-            this->_currentPhase = TrafficLightPhase::green;
-            std::cout << "Intersection #" << _id << ": Traffic Light switched to green!" << std::endl;
-        }
-        _phaseQueue.send(std::move(_currentPhase));
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
