@@ -95,9 +95,9 @@ void TrafficLight::cycleThroughPhases()
     lastUpdate = std::chrono::system_clock::now(); 
     long timeSinceLastUpdate;
     
-    std::random_device rd;
-    std::mt19937 eng(rd());
-    std::uniform_int_distribution<> distr(4000,6000);
+    static std::random_device rd;
+    static std::mt19937 eng(rd());
+    std::uniform_real_distribution<> distr(4000,6000);
     double random = distr(eng);
     while(true) {
         
